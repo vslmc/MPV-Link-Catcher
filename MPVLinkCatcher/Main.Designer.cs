@@ -67,7 +67,7 @@
             this.BootCheckbox.TabStop = false;
             this.BootCheckbox.Text = "Start with Windows";
             this.BootCheckbox.UseVisualStyleBackColor = true;
-            this.BootCheckbox.CheckedChanged += new System.EventHandler(this.CheckBox1_CheckedChanged);
+            this.BootCheckbox.CheckedChanged += new System.EventHandler(this.BootCheckboxClick);
             // 
             // SimpleLabel
             // 
@@ -86,7 +86,6 @@
             this.TrayIcon.BalloonTipTitle = "MPV Link Catcher";
             this.TrayIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("TrayIcon.Icon")));
             this.TrayIcon.Text = "MPV Link Catcher";
-            this.TrayIcon.Visible = true;
             this.TrayIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.TrayIconClick);
             // 
             // HideInTrayButton

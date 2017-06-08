@@ -14,17 +14,26 @@ namespace MPVLinkCatcher
         {
             InitializeComponent();
             ClipboardListener = SetClipboardViewer(this.Handle);
+
+            RegistryKey AutoStartPath = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            string valueName = "MPV-LC";
+
+            if (AutoStartPath.GetValue(valueName) == null)
+            { BootCheckbox.Checked = false; }
+
+            else
+            { BootCheckbox.Checked = true; }
         }
+
+        RegistryKey AutoStartPath = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 
         [DllImport("User32.dll", CharSet = CharSet.Auto)]
         public static extern bool ChangeClipboardChain(IntPtr hWndRemove, IntPtr hWndNewNext);
-
         [DllImport("User32.dll", CharSet = CharSet.Auto)]
         public static extern IntPtr SetClipboardViewer(IntPtr hWndNewViewer);
 
         private const int WM_DRAWCLIPBOARD = 0x0308;
         private IntPtr ClipboardListener;
-
         protected override void WndProc(ref Message m)
         {
             base.WndProc(ref m);
@@ -42,12 +51,22 @@ namespace MPVLinkCatcher
 
                     foreach (Match match in URL)
                     {
-                        string s2 = match.Value;
                         URLTextbox.Text = text;
-                        Process.Start("mpv.exe", URLTextbox.Text);
+                        Process.Start("mpv.exe", text);
                     }
                 }
             }
+        }
+
+
+        string valueName = "MPV-LC";
+        private void BootCheckboxClick(object sender, EventArgs e)
+        {
+            if (BootCheckbox.Checked)
+            { AutoStartPath.SetValue(valueName, Application.ExecutablePath); }
+
+            else
+            { AutoStartPath.DeleteValue(valueName, false); }
         }
 
         private void HideButton(object sender, EventArgs e)
@@ -64,23 +83,8 @@ namespace MPVLinkCatcher
         }
 
         public void OKButton(object sender, EventArgs e)
-        {           
-            Process.Start("mpv.exe", URLTextbox.Text);
-        }
-
-        private void CheckBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if (BootCheckbox.Checked)
-            {
-                    RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-                    registryKey.SetValue("ApplicationName", Application.ExecutablePath);
-
-            }
-            else if (!BootCheckbox.Checked)
-            {
-                RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-                registryKey.DeleteValue("ApplicationName");
-            }
+           Process.Start("mpv.exe", URLTextbox.Text);
         }
     }
 }
